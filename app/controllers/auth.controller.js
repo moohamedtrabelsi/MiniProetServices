@@ -9,15 +9,28 @@ var bcrypt = require("bcryptjs");
 exports.signup = (req, res) => {
   const user = new User({
     username: req.body.username,
+    firstname:req.body.firstname,
+    lastname:req.body.lastname,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8)
   });
-
+  var nchallah = 0;
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
       return;
     }
+
+    User.findOne({ username: "x" }, (err, u) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      user.listofdp = [u._id];
+       nchallah = 1;
+    
+    });
 
     if (req.body.roles) {
       Role.find(
@@ -37,7 +50,7 @@ exports.signup = (req, res) => {
               return;
             }
 
-            res.send({ message: "User was registered successfully!" });
+            res.send({ message: "User was registered successfully!" ,num:nchallah});
           });
         }
       );
@@ -67,6 +80,7 @@ exports.signin = (req, res) => {
     username: req.body.username
   })
     .populate("roles", "-__v")
+    .populate("listofdp", "-__l")
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -98,12 +112,115 @@ exports.signin = (req, res) => {
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
+      var users = [];
+
+      for (let i = 0; i < user.listofdp.length; i++) {
+        users.push("usr-" + user.listofdp[i].username.toUpperCase());
+      }
+
       res.status(200).send({
-        id: user._id,
+        
+        
         username: user.username,
+        firstname:user.firstname,
+        lastname:user.lastname,
         email: user.email,
+        password: user.password,
         roles: authorities,
-        accessToken: token
+        lst:users,
+        
       });
     });
 };
+
+exports.getUser = (req, res) => {
+  User.findOne({
+    username: req.body.username
+  })
+    .populate("roles", "-__v")
+    .exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      res.status(200).send({
+        
+        
+        username: user.username,
+        firstname:user.firstname,
+        lastname:user.lastname,
+        email: user.email,
+        
+      });
+    });
+};
+
+
+exports.updateUser = (req, res) => {
+  User.findOne({
+    username: req.body.username
+  })
+    .exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      user.firstname=req.body.firstname,
+      user.lastname =req.body.lastname,
+      user.email=req.body.email,
+      user.password= bcrypt.hashSync(req.body.password, 8)
+      res.status(200).send({
+        
+        
+        username: user.username,
+        firstname:user.firstname,
+        lastname:user.lastname,
+        email: user.email,
+        
+      });
+    });
+};
+
+
+thatUser = (usrn)=>{
+
+  User.findOne({
+    username: usrn
+  })
+  
+
+   return user;
+    
+
+}
+
+exports.updatelist = (req, res) => {
+  User.findOne({
+    username: req.body.username
+  })
+  .populate("listdp", "-__v")
+ .exec((err, user) => {
+      var testhama =1;
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+ 
+      res.status(200).send({
+        
+        
+        username: user.username,
+        firstname:user.firstname,
+        lastname:user.lastname,
+        email: user.email,
+        list:user.listdofp,
+        hama:testhama,
+        
+      });
+    });
+};
+
+
+
