@@ -5,11 +5,16 @@ const dbConfig = require("./app/config/db.config");
 
 const app = express();
 
+global.__basedir = __dirname;
+
+
 var corsOptions = {
     origin: "http://localhost:8081"
 };
 
 app.use(cors(corsOptions));
+app.use(express.json())
+
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
@@ -41,6 +46,7 @@ app.get("/", (req, res) => {
 
 // routes
 require("./app/routes/auth.routes")(app);
+require("./app/routes/file.routes")(app);
 require("./app/routes/user.routes")(app);
 
 // set port, listen for requests

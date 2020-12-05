@@ -125,8 +125,8 @@ exports.signin = (req, res) => {
         firstname:user.firstname,
         lastname:user.lastname,
         email: user.email,
-        password: user.password,
-        roles: authorities,
+        //password: user.password,
+        //roles: authorities,
         lst:users,
         
       });
@@ -170,7 +170,7 @@ exports.updateUser = (req, res) => {
       user.firstname=req.body.firstname,
       user.lastname =req.body.lastname,
       user.email=req.body.email,
-      user.password= bcrypt.hashSync(req.body.password, 8)
+     // user.password= bcrypt.hashSync(req.body.password, 8)
       res.status(200).send({
         
         
