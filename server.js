@@ -41,7 +41,7 @@ db.mongoose
 
 // simple route
 app.get("/", (req, res) => {
-    res.json({ message: "Hala Madrid ." });
+    res.json({ message: "miroir miroir dis moi qui est la plus belle?" });
 });
 
 // routes
