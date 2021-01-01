@@ -14,6 +14,12 @@ const User = mongoose.model(
         ref: "Role"
       }
     ],
+    analyses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Analyse"
+      }
+    ],
     listofdp: [
       {
         type: mongoose.Schema.Types.ObjectId,

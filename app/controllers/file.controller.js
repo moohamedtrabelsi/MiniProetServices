@@ -1,6 +1,7 @@
 const uploadFile = require("../middlewares/file");
 const fs = require('fs');
 const GridFsStorage = require("multer-gridfs-storage");
+const Analyse = require("../models/analyse.model");
 
 const { Mongoose, mongo } = require("mongoose");
 const { mongoose } = require("../models");
@@ -8,8 +9,6 @@ const Grid = require('gridfs-stream');
 const mongoURI = "mongodb://localhost:27017/HealthSheet";
 
 const conn = mongoose.createConnection(mongoURI);
-
-
 
 let gfs;
 conn.once('open',()=>{
@@ -37,12 +36,32 @@ const upload = async (req, res) => {
   try {
     await uploadFile(req, res);
 
-    if (req.file == undefined) {
-      return res.status(400).send({ message: "Please upload a file!" });
+    const analyse = new Analyse({
+      filename : req.file.filename
+  })
+
+  analyse.save(err =>{
+      if(err){
+          if (err) {
+              res.status(500).send({ message: err });     
+          }
+      }
+  })
+  User.findOne({
+    username: req.body.doctor
+  })
+  .exec((err, user) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
     }
 
+      user.analyses.push(analyse._id)
+  });
     res.status(200).send({
-      message: "Uploaded the file successfully: "
+      filename:analyse.filename,
+      id:analyse._id,
+
     });
   } catch (err) {
     res.status(500).send({
@@ -72,6 +91,49 @@ const getListFiles = (req, res) => {
     }
   });
 };
+
+const getListFilesNames = (req, res) => {
+
+  gfs.files.find().toArray((err, files) => {
+    // Check if files
+    if (!files || files.length === 0) {
+      res.status(404).send( {message: `Could not find the file: `})
+    } else {
+      files.map(file => {
+        if (
+          file.contentType === 'image/jpeg' ||
+          file.contentType === 'image/png'
+        ) {
+          file.isImage = true;
+        } else {
+          file.isImage = false;
+        }
+      });
+      res.status(200).send({ filename: files[files.length-1].filename });
+    }
+  });
+};
+
+const analyse = (req,res)=>{
+    gfs.files.find().toArray((err, files) => {
+      const analyse = new Analyse({
+        filename : files[files.length-1].filename
+    })
+
+    analyse.save(err =>{
+        if(err){
+            if (err) {
+                res.status(500).send({ message: err });
+                return; 
+            }
+        }
+            res.send({message:"Analyse added"})
+    })
+    });
+      
+  
+
+}
 
 const getimage = (req,res)=>{
   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
@@ -115,4 +177,6 @@ module.exports = {
   getListFiles,
   download,
   getimage,
+  getListFilesNames,
+  analyse,
 };

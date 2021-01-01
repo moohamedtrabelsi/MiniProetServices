@@ -20,7 +20,7 @@ module.exports = function(app) {
   );
 
   app.post("/api/auth/signin", controller.signin);
-  app.get("/api/auth/getuser", controller.getUser);
+  app.post("/api/auth/getuser", controller.getUser);
   app.post("/api/auth/updateuser", controller.updateUser);
   app.post("/api/auth/updatelist", controller.updatelist);
   

@@ -5,18 +5,21 @@ const ordonnance = db.ordonnance;
 
 
 exports.createOrdonnance = (req,res)=>{
-    const ordonnance = new Ordonnance({
-    medicaments : req.body.medicament
-
-    })
-
-    ordonnance.save(err =>{
-        if(err){
-            if (err) {
-                res.status(500).send({ message: err });
-                return; 
+    
+    if(req.body.medicaments){
+        const ordonnance = new Ordonnance({
+            medicaments : req.body.medicaments
+        })
+    
+        ordonnance.save(err =>{
+            if(err){
+                if (err) {
+                    res.status(500).send({ message: err });
+                    return; 
+                }
             }
-        }
-            res.send({message:"ordonnance added"})
-    })
+                res.send({message:"ordonnance added"})
+        })
+    }else res.status(404).send({message :"insert med"})
+  
 }

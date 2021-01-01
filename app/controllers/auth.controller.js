@@ -14,7 +14,6 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8)
   });
-  var nchallah = 0;
   user.save((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -55,7 +54,7 @@ exports.signup = (req, res) => {
         }
       );
     } else {
-      Role.findOne({ name: "user" }, (err, role) => {
+      Role.findOne({ name: "User" }, (err, role) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
@@ -110,25 +109,25 @@ exports.signin = (req, res) => {
       var authorities = [];
 
       for (let i = 0; i < user.roles.length; i++) {
-        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+        authorities.push(user.roles[i].name.toUpperCase());
       }
       var users = [];
 
       for (let i = 0; i < user.listofdp.length; i++) {
-        users.push("usr-" + user.listofdp[i].username.toUpperCase());
+        users.push( user.listofdp[i].username);
       }
 
       res.status(200).send({
         
         
-        /*username: user.username,
+        username: user.username,
         firstname:user.firstname,
         lastname:user.lastname,
         email: user.email,
-        //password: user.password,
-        //roles: authorities,
-        lst:users,*/
-        user: user ,
+        password: user.password,
+        roles: authorities[0],
+       listofdp:authorities,
+       // user: user ,
         
       });
     });
@@ -152,7 +151,8 @@ exports.getUser = (req, res) => {
         firstname:user.firstname,
         lastname:user.lastname,
         email: user.email,
-        
+        password: user.password,
+      
       });
     });
 };
@@ -171,16 +171,23 @@ exports.updateUser = (req, res) => {
       user.firstname=req.body.firstname,
       user.lastname =req.body.lastname,
       user.email=req.body.email,
+      user.save(err => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+
+        res.status(200).send({
+        
+        
+          username: user.username,
+          firstname:user.firstname,
+          lastname:user.lastname,
+          email: user.email,
+          
+        });      });
      // user.password= bcrypt.hashSync(req.body.password, 8)
-      res.status(200).send({
-        
-        
-        username: user.username,
-        firstname:user.firstname,
-        lastname:user.lastname,
-        email: user.email,
-        
-      });
+ 
     });
 };
 

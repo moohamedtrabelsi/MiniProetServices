@@ -50,7 +50,7 @@ exports.signup = (req, res) => {
               return;
             }
 
-            res.send({ message: "User was registered successfully!" ,num:nchallah});
+            res.send({ message: "User was registered successfully!" });
           });
         }
       );
@@ -128,7 +128,9 @@ exports.signin = (req, res) => {
         //password: user.password,
         //roles: authorities,
         lst:users,*/
-        user: user ,
+        //user: user ,
+       id:user._id,
+       email: user.email,
         
       });
     });
@@ -152,6 +154,7 @@ exports.getUser = (req, res) => {
         firstname:user.firstname,
         lastname:user.lastname,
         email: user.email,
+        //id:user._id,
         
       });
     });
