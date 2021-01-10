@@ -7,20 +7,42 @@ const Analyse = require("../models/analyse.model");
 
 exports.analyse = (req,res)=>{
     
-    if(req.body.filename){
+    if(req.body.id){
         const analyse = new Analyse({
-            filename : req.body.filename
+            _id : req.body.id
         })
-    
-        analyse.save(err =>{
-            if(err){
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return; 
-                }
+        User.findOne({
+            username: req.body.doctor
+          })
+          .exec((err, user) => {
+            if (err) {
+              res.status(500).send({ message: err });
+              return;
             }
-                res.send({message:"Analyse added"})
-        })
-    }else res.status(404).send({message :"insert file"})
+            user.analyses.push(analyse._id)
+          });
+    
+      res.status(200).send({message:"yess"})
+    }
+    else res.status(404).send({message :"insert file"})
   
 }
+
+
+exports.getAnalyse = (req, res) => {
+  Analyse.findOne({
+    _id: req.body.id
+  })
+    .exec((err, a) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      res.status(200).send({
+      
+        a: a.filename,
+      
+      });
+    });
+};

@@ -9,6 +9,8 @@ module.exports = function( app ){
 
     app.post("/api/auth/analyse", controller.analyse);
 
+    app.post("/api/auth/send", controller.send);
+
     app.get("/api/getfiles", controller.getListFiles);
 
     app.get("/api/getlastname", controller.getListFilesNames);

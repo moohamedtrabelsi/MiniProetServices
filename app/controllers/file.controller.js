@@ -2,6 +2,9 @@ const uploadFile = require("../middlewares/file");
 const fs = require('fs');
 const GridFsStorage = require("multer-gridfs-storage");
 const Analyse = require("../models/analyse.model");
+const db = require("../models");
+
+const User = db.user;
 
 const { Mongoose, mongo } = require("mongoose");
 const { mongoose } = require("../models");
@@ -47,6 +50,7 @@ const upload = async (req, res) => {
           }
       }
   })
+  /*
   User.findOne({
     username: req.body.doctor
   })
@@ -58,9 +62,13 @@ const upload = async (req, res) => {
 
       user.analyses.push(analyse._id)
   });
+  */
     res.status(200).send({
       filename:analyse.filename,
       id:analyse._id,
+      doctor:"x",
+      patient:"m=no",
+
 
     });
   } catch (err) {
@@ -113,6 +121,46 @@ const getListFilesNames = (req, res) => {
     }
   });
 };
+
+const send = (req, res) => {
+
+  if(req.body.id){
+    Analyse.findOne({
+      filename: req.body.filename
+    }).exec((err,a)=>{
+
+    User.findOne({
+        username: req.body.doctor
+      })
+      .exec((err, user) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+        user.analyses = [a._id];
+
+        user.save(err => {
+          if (err) {
+            res.status(500).send({ message: err });
+            return;
+          }
+  
+          res.status(200).send({
+          
+          
+            username: user.username,
+           
+            
+          });      });
+        
+        
+      });
+    }) ;
+ 
+}
+else res.status(404).send({message :"insert file"})
+};
+
 
 const analyse = (req,res)=>{
     gfs.files.find().toArray((err, files) => {
@@ -179,4 +227,5 @@ module.exports = {
   getimage,
   getListFilesNames,
   analyse,
+  send,
 };

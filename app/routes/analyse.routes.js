@@ -4,6 +4,6 @@ const router = express.Router();
 const controller = require("../controllers/analyse.controller");
 
 module.exports = function( app ){
-    app.post("/api/auth/createanalyse", controller.analyse);
+    app.post("/api/auth/get", controller.getAnalyse);
 
 }

@@ -116,7 +116,7 @@ exports.signin = (req, res) => {
       for (let i = 0; i < user.listofdp.length; i++) {
         users.push( user.listofdp[i].username);
       }
-
+        
       res.status(200).send({
         
         
@@ -126,7 +126,8 @@ exports.signin = (req, res) => {
         email: user.email,
         password: user.password,
         roles: authorities[0],
-       listofdp:authorities,
+       listofdp:users,
+       analyses:user.analyses,
        // user: user ,
         
       });
@@ -229,55 +230,55 @@ exports.updatelist = (req, res) => {
       });
     });
 };
-
-
 exports.email = (req, res) => {
 
-let userData = req.body
-
-    User.findOne({email: userData.email},(error,user)=>{
-
-
-        if(user){
-          res.status(200).send({message:"valide"});
-        }else{
-            if(!user){
-                res.status(401).send({message:"not"})
-
-         }
-        }
+  let userData = req.body
+  
+      User.findOne({email: userData.email},(error,user)=>{
+  
+  
+          if(user){
+            res.status(200).send({message:"valide"});
+          }else{
+              if(!user){
+                  res.status(401).send({message:"not"})
+  
+           }
+          }
+        })
+    
+    };
+  
+  
+    exports.updatePass = (req, res) => {
+      User.findOne({
+        email: req.body.email
       })
-  
-  };
-
-
-  exports.updatePass = (req, res) => {
-    User.findOne({
-      email: req.body.email
-    })
-      .exec((err, user) => {
-        if (err) {
-          res.status(500).send({ message: "not" });
-          return;
-        }
-  
-        user.password=bcrypt.hashSync(req.body.password),
-        user.save(err => {
+        .exec((err, user) => {
           if (err) {
             res.status(500).send({ message: "not" });
             return;
           }
-  
-          res.status(200).send({ 
-            message:"valide",
-          
-           // password: user.password
-            password: user.password= bcrypt.hashSync(req.body.password)
-
+    
+          user.password=bcrypt.hashSync(req.body.password),
+          user.save(err => {
+            if (err) {
+              res.status(500).send({ message: "not" });
+              return;
+            }
+    
+            res.status(200).send({ 
+              message:"valide",
             
-          });      });
-       // user.password= bcrypt.hashSync(req.body.password, 8)
-   
-      });
-  };
+             // password: user.password
+              password: user.password= bcrypt.hashSync(req.body.password)
   
+              
+            });      });
+         // user.password= bcrypt.hashSync(req.body.password, 8)
+     
+        });
+    };
+
+
+
