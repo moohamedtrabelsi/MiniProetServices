@@ -231,4 +231,53 @@ exports.updatelist = (req, res) => {
 };
 
 
+exports.email = (req, res) => {
 
+let userData = req.body
+
+    User.findOne({email: userData.email},(error,user)=>{
+
+
+        if(user){
+          res.status(200).send({message:"valide"});
+        }else{
+            if(!user){
+                res.status(401).send({message:"not"})
+
+         }
+        }
+      })
+  
+  };
+
+
+  exports.updatePass = (req, res) => {
+    User.findOne({
+      email: req.body.email
+    })
+      .exec((err, user) => {
+        if (err) {
+          res.status(500).send({ message: "not" });
+          return;
+        }
+  
+        user.password=bcrypt.hashSync(req.body.password),
+        user.save(err => {
+          if (err) {
+            res.status(500).send({ message: "not" });
+            return;
+          }
+  
+          res.status(200).send({ 
+            message:"valide",
+          
+           // password: user.password
+            password: user.password= bcrypt.hashSync(req.body.password)
+
+            
+          });      });
+       // user.password= bcrypt.hashSync(req.body.password, 8)
+   
+      });
+  };
+  

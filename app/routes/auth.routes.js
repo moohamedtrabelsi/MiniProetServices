@@ -1,5 +1,6 @@
 const { verifySignUp } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
+const { Router } = require("express");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -23,6 +24,9 @@ module.exports = function(app) {
   app.post("/api/auth/getuser", controller.getUser);
   app.post("/api/auth/updateuser", controller.updateUser);
   app.post("/api/auth/updatelist", controller.updatelist);
-  
+  app.post("/api/auth/email", controller.email);
+  app.put("/api/auth/updatePass", controller.updatePass);
 
+  
+module.exports = Router
 };
