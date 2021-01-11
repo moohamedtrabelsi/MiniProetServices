@@ -20,6 +20,12 @@ const User = mongoose.model(
         ref: "Analyse"
       }
     ],
+    visites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Visite"
+      }
+    ],
     listofdp: [
       {
         type: mongoose.Schema.Types.ObjectId,

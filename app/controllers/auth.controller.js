@@ -6,6 +6,8 @@ const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
+
+
 exports.signup = (req, res) => {
   const user = new User({
     username: req.body.username,
@@ -116,6 +118,10 @@ exports.signin = (req, res) => {
       for (let i = 0; i < user.listofdp.length; i++) {
         users.push( user.listofdp[i].username);
       }
+      var analys = [];
+      for (let i = 0; i < user.analyses.length; i++) {
+        analys.push( user.analyses[i].filename);
+      }
         
       res.status(200).send({
         
@@ -138,11 +144,27 @@ exports.getUser = (req, res) => {
   User.findOne({
     username: req.body.username
   })
+    .populate("analyses","__a")
     .populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
         return;
+      }
+
+      var authorities = [];
+
+      for (let i = 0; i < user.roles.length; i++) {
+        authorities.push(user.roles[i].name.toUpperCase());
+      }
+      var users = [];
+
+      for (let i = 0; i < user.listofdp.length; i++) {
+        users.push( user.listofdp[i].username);
+      }
+      var analys = [];
+      for (let i = 0; i < user.analyses.length; i++) {
+        analys.push( user.analyses[i].filename);
       }
 
       res.status(200).send({
@@ -153,6 +175,9 @@ exports.getUser = (req, res) => {
         lastname:user.lastname,
         email: user.email,
         password: user.password,
+        roles: authorities[0],
+       listofdp:users,
+       analyses:user.users,
       
       });
     });
@@ -281,4 +306,8 @@ exports.email = (req, res) => {
     };
 
 
+
+
+
+  
 

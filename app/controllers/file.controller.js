@@ -41,6 +41,7 @@ const upload = async (req, res) => {
 
     const analyse = new Analyse({
       filename : req.file.filename
+    
   })
 
   analyse.save(err =>{
@@ -124,10 +125,19 @@ const getListFilesNames = (req, res) => {
 
 const send = (req, res) => {
 
-  if(req.body.id){
+  if(req.body.filename){
     Analyse.findOne({
       filename: req.body.filename
     }).exec((err,a)=>{
+      a.doctor=req.body.doctor,
+      a.patient=req.body.patient,
+      a.save(err =>{
+        if(err){
+            if (err) {
+                res.status(500).send({ message: err });     
+            }
+        }
+    })
 
     User.findOne({
         username: req.body.doctor
@@ -137,7 +147,7 @@ const send = (req, res) => {
           res.status(500).send({ message: err });
           return;
         }
-        user.analyses = [a._id];
+        user.analyses.push(a);
 
         user.save(err => {
           if (err) {
@@ -151,12 +161,10 @@ const send = (req, res) => {
             username: user.username,
            
             
-          });      });
-        
+          });  });
         
       });
     }) ;
- 
 }
 else res.status(404).send({message :"insert file"})
 };

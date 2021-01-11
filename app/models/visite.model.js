@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const Visite = mongoose.model(
   "Visite",
   new mongoose.Schema({
-    username: String,
+    o: String,
+    a:String,
     ordonnance: 
         {
           type: mongoose.Schema.Types.ObjectId,

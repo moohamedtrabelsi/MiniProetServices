@@ -41,7 +41,9 @@ exports.getAnalyse = (req, res) => {
 
       res.status(200).send({
       
-        a: a.filename,
+        filename: a.filename,
+        doctor:a.doctor,
+        patient:a.patient,
       
       });
     });
